@@ -1,0 +1,11 @@
+# configs of note for resources as needed to create in console
+# & some that I haven't templatized yet
+
+message_handler:
+  runtime: python
+  env:
+    USER: <aws access key>
+    SECRET: <aws secret key>
+  iam_role: BookingFormLambdaRole
+  email_recepient: jacoby@arielleworld.com
+  aws_region: us-east-1
