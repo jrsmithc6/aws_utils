@@ -9,7 +9,7 @@ def lambda_handler(event, context):
         response = {
             'statusCode': 200,
             'headers': {
-                'Access-Control-Allow-Origin': 'http://mardigraskings.com.s3-website-us-east-1.amazonaws.com',
+                'Access-Control-Allow-Origin': 'http://mardigraskings.com.s3-website-us-east-1.amazonaws.com, https://www.mardigraskings.com',
                 'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, HEAD',
                 'Access-Control-Allow-Headers': 'content-type, accept',  # Make them lowercase
                 'Access-Control-Allow-Credentials': 'Email sent successfully'
@@ -19,22 +19,33 @@ def lambda_handler(event, context):
         return response
 
     # Handle actual POST request
-    name = event['body']['name']
-    email = event['body']['email']
-    message = event['body']['message']
+    try:
+        body = json.loads(event['body'])
+        name = body['name']
+        email = body['email']
+        message = body['message']
+
+        # The rest of your code for handling the POST request...
+    except json.JSONDecodeError:
+        response = {
+            'statusCode': 400,
+            'body': 'Invalid JSON in request body'
+        }
+        return response
+
 
     smtp_user = os.environ['USER']
     smtp_pass = os.environ['SECRET']
 
     params = {
         'Destination': {
-            'ToAddresses': ['jacoby@arielleworld.com']  # Replace with your email address
+            'ToAddresses': ['jacoby@arielleworld.com','barzac@aol.com']
         },
         'Message': {
             'Body': {
                 'Text': {'Data': f'Name: {name}\nEmail: {email}\nMessage:\n{message}'}
             },
-            'Subject': {'Data': f'Booking Request from {name}'}
+            'Subject': {'Data': f'Info Request from {name}'}
         },
         'Source': 'jacoby@arielleworld.com'  # Replace with your email address
     }
@@ -46,7 +57,7 @@ def lambda_handler(event, context):
     response = {
         'statusCode': 200,
         'headers': {
-            'Access-Control-Allow-Origin': 'http://mardigraskings.com.s3-website-us-east-1.amazonaws.com',  # Allow requests from any origin
+            'Access-Control-Allow-Origin': 'http://mardigraskings.com.s3-website-us-east-1.amazonaws.com, https://www.mardigraskings.com, https://www.mardigraskings.com/zack', 
             'Access-Control-Allow-Credentials': 'true'
         },
         'body': json.dumps('Email sent successfully!')
